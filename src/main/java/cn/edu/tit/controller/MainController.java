@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import cn.edu.tit.bean.Course;
 import cn.edu.tit.bean.CourseExpand;
+import cn.edu.tit.bean.IURP;
 import cn.edu.tit.bean.Teacher;
 import cn.edu.tit.iservice.IAchievementService;
 import cn.edu.tit.iservice.ITeacherService;
@@ -53,6 +54,28 @@ public class MainController {
 			mv.addObject("aocscList", aocscList);
 			//mv.addObject("teacherNameList",teacherNameList);
 
+			
+			List<IURP> iURPList =new ArrayList<>();
+			List<IURP> iURPList2 =new ArrayList<>();
+				iURPList = iAchievementService.queryIURP();
+				for(IURP i : iURPList){
+					int ind = i.getIntroduction().length();
+					if(ind >= 10)
+						i.setIntroduction(i.getIntroduction().substring(0, 9));
+					int in = i.getProjectName().length();
+					if(in >= 10){
+						i.setProjectName(i.getProjectName().substring(0,9));
+					}
+				}
+				if(iURPList.size()>=6){
+					for(int i = 0;i<6;i++){
+						iURPList2.add(iURPList.get(i));
+					}
+					mv.addObject("iURPList",iURPList2);
+				}
+				else
+					mv.addObject("iURPList",iURPList);
+			
 			mv.addObject("publishTime",publishTime);
 			mv.addObject("teacherList",teacherList);
 

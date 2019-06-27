@@ -37,12 +37,17 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.edu.tit.bean.AOCSC;
 import cn.edu.tit.bean.Accessory;
 import cn.edu.tit.bean.Attendance;
 import cn.edu.tit.bean.Category;
 import cn.edu.tit.bean.Course;
+import cn.edu.tit.bean.CourseExpand;
+import cn.edu.tit.bean.GDFCS;
+import cn.edu.tit.bean.IURP;
 import cn.edu.tit.bean.RealClass;
 import cn.edu.tit.bean.Resource;
+import cn.edu.tit.bean.SIAE;
 import cn.edu.tit.bean.Student;
 import cn.edu.tit.bean.Task;
 import cn.edu.tit.bean.Teacher;
@@ -50,6 +55,7 @@ import cn.edu.tit.bean.Term;
 import cn.edu.tit.bean.UpTask;
 import cn.edu.tit.bean.VirtualClass;
 import cn.edu.tit.common.Common;
+import cn.edu.tit.iservice.IAchievementService;
 import cn.edu.tit.iservice.IResourceService;
 import cn.edu.tit.iservice.IStudentService;
 import cn.edu.tit.iservice.ITeacherService;
@@ -71,7 +77,10 @@ public class WxTeacherController {
 	private IStudentService studentService;
 	@Autowired
 	private IResourceService resourceService;
+	@Autowired
+	private IAchievementService iAchievementService;
 
+	
 	/**
 	 * 微信端登录
 	 * 
@@ -748,11 +757,12 @@ public class WxTeacherController {
 	 */
 	@RequestMapping(value="toPublishTask")
 	@SuppressWarnings({ "unused", "unchecked" })
-	public Map<String, Object> toPublishTask(HttpServletRequest request,@RequestParam("course") Course course) {
+	public Map<String, Object> toPublishTask(HttpServletRequest request,@RequestParam("courseId") String courseId) {
 		Map<String, Object> ret = new HashMap<>();
 		//Course course;
 		try {
-			List<String> taskCategoryList=null;
+			Course course = teacherService.getCourseById(courseId);
+			List<String> taskCategoryList=new ArrayList<>();
 			//course = (Course) request.getSession().getAttribute("course");
 			taskCategoryList = teacherService.getTaskCategory();
 			request.getSession().setAttribute("taskCategoryList", taskCategoryList);
@@ -1705,6 +1715,86 @@ public class WxTeacherController {
 		}
 		
 	}
+	
+	
+	/**
+	 * @description 获取成果数据集合
+	 * @param category
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value = "achs")
+	public JSONObject getAchievements(@RequestParam("category") String category,
+			@RequestParam("pageNum") String pageNum, @RequestParam("pageSize") String pageSize) {
+		JSONObject result = new JSONObject();
+
+		// @RequestParam("category") String category,@RequestParam("pageNum") String
+		// pageNum ,@RequestParam("pageSize") String pageSize
+		try {
+			// 大学生竞赛成果
+			List<AOCSC> aocscList = new ArrayList<>();
+			// 课程拓展
+			List<CourseExpand> courseExpandList = new ArrayList<>();
+			// 大学生毕业设计
+			List<GDFCS> gdfcsList = new ArrayList<>();
+			// 大学生创新创业
+			List<SIAE> siaeList = new ArrayList<>();
+			// 产学研类
+			List<IURP> iURPList = new ArrayList<>();
+			switch (category) {
+			case "AOCSC":
+				aocscList = iAchievementService.queryAOCSC();
+				result.put("AOCSC", aocscList);
+				break;
+			case "CourseExpand":
+				courseExpandList = iAchievementService.queryCourseExpand();
+				result.put("CourseExpand", courseExpandList);
+				break;
+			case "GDFCS":
+				gdfcsList = iAchievementService.queryGDFCS();
+				result.put("GDFCS", gdfcsList);
+				break;
+			case "SIAE":
+				siaeList = iAchievementService.querySIAE();
+				result.put("SIAE", siaeList);
+				break;
+			case "IURP":
+				iURPList = iAchievementService.queryIURP();
+				result.put("IURP", iURPList);
+				break;
+			}
+			result.put("status", "ok");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("status", "error");
+		}
+		return result;
+	}
+
+	/**
+	 * @description 获取成果数据集合
+	 * @param category
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value = "courseAchs")
+	public JSONObject getCourseAch(@RequestParam("courseId") String courseId) {
+		JSONObject result = new JSONObject();
+		try {
+			// 课程拓展
+			List<CourseExpand> courseExpandList = iAchievementService.queryCourseExpandByCourseId(courseId);
+			result.put("courseExpandList", courseExpandList);
+			result.put("status", "ok");
+		} catch (Exception e) {
+			e.printStackTrace();
+			//logger.error(e.toString() + "\n", e);
+			result.put("status", "error");
+		}
+		return result;
+	}
+
 	
 	private JSONArray taskSort(List<Task> taskList, String studentId){
 		

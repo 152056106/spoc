@@ -24,7 +24,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			function checkInput(form) {
 				var fileInput = $('#upfile').get(0).files[0];
 				
-				 if($("#upTaskDetail").val()==""&&!fileInput){
+				 if(!UE.getEditor('upTaskDetail').hasContents()&&!fileInput){
 					 alert("请编写作业以后再尝试提交");
 					 return false;	 
 				 }

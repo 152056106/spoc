@@ -124,7 +124,7 @@ public class TeacherController {
 				{	
 					request.getSession().setAttribute("teacherId", teacher.getEmployeeNum());
 					request.getSession().setAttribute("teacher", teacher);
-					mv=mainController.toMain(request); //去首页
+					mv=toTeacherPage(request); //去首页
 					//清空其他身份SESSION
 					
 					request.getSession().removeAttribute("student");
@@ -134,12 +134,12 @@ public class TeacherController {
 					mv.addObject("teacher",teacher);
 				}
 				else {
-					request.getSession().setAttribute("readResult", "密码错误");//返回信息
+					request.getSession().setAttribute("readResult", "密码错误！");//返回信息
 
 					mv.setViewName("/jsp/Teacher/index");//设置返回页面
 				}
 			} catch (Exception e) {
-				request.getSession().setAttribute("readResult", "登录异常，请刷新本页后重新登录");//返回信息
+				request.getSession().setAttribute("readResult", "用户名错误！");//返回信息
 					mv.setViewName("/jsp/Teacher/index");//设置返回页面
 
 				e.printStackTrace();
@@ -149,6 +149,7 @@ public class TeacherController {
 		 */
 		return mv;	
 	}
+
 
 	/**
 	 * @author LiMing
@@ -508,6 +509,9 @@ public class TeacherController {
 		}
 		return "jsp/Teacher/lesson-introduce";
 	}
+	
+	
+	
 	/**
 	 * 创建课程
 	 * @return
@@ -554,6 +558,10 @@ public class TeacherController {
 		}
 
 	}
+
+	
+	
+	
 	/**
 	 * @author LiMing
 	 * 创建虚拟班级
@@ -2578,6 +2586,7 @@ public class TeacherController {
 					task.setTaskDetail(de);
 				}
 			}
+			
 			//教案库
 			List<Task> teaching_plan = teacherService.getTaskByPointAndCourse("teaching_plan",courseId);
 			for (Task task : teaching_plan) {
@@ -2613,7 +2622,7 @@ public class TeacherController {
 				taskList.add(task);
 			}
 			//课设库
-			List<Task> curriculum_design = teacherService.getTaskByPointAndCourse("curriculum_design",courseId);
+			List<Task> curriculum_design = teacherService.getTaskByPointAndCourse("course_design",courseId);
 			for (Task task : curriculum_design) {
 				task.setPublisherId(teacherService.getTeacherNameById(task.getPublisherId()));
 				//限制显示字数

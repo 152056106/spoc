@@ -31,7 +31,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <main>
 
-<!-- <div class="main_b">
+<div class="main_b">
 <div style="    width: 100%;
     height: 100%;
     text-align: center;
@@ -41,48 +41,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 </div>
 </div>
 </main>
-<footer></footer> -->
-<div class="container" >
-					<div class="carousel slide" id="slidershow" data-ride="carousel" data-interval="2000">
-						<!--计数器-->
-						<ol class="carousel-indicators">
-							<li class="active" data-target="#slidershow" data-slide-to="0"></li>
-							<li data-target="#slidershow" data-slide-to="1"></li>
-							<li data-target="#slidershow" data-slide-to="2"></li>
-						</ol>
-						<!--图片容器-->
-						<div class="carousel-inner">
-							<div class="item active">
-								<img src="${pageContext.request.contextPath}/images/tu1.jpg"/>
-								<!--添加对应标题和内容-->
-								<div class="carousel-caption">
-									<h4>图一</h4>
-									<span>内容</span>
-								</div>
-							</div>
-							<div class="item">
-								<img src="${pageContext.request.contextPath}/images/tu1.jpg"/>
-								<!--添加对应标题和内容-->
-								<div class="carousel-caption">
-									<h4>图二</h4>
-								</div>
-							</div>
-							<div class="item">
-								<img src="${pageContext.request.contextPath}/images/tu1.jpg"/>
-								<!--添加对应标题和内容-->
-								<div class="carousel-caption">
-									<h4>图三</h4>
-								</div>
-							</div>
-							<!--轮播导航-->
-							<a href="#slidershow" data-slide="prev" class="left carousel-control" role="button">
-								<img src="${pageContext.request.contextPath}/images/position.png"/>
-							</a>
-							<a href="#slidershow" data-slide="next" class="right carousel-control" role="button">
-								<img src="${pageContext.request.contextPath}/images/position.png"/>
-							</a>
-						</div>
-					</div>
-				</div>
+<footer></footer> 
+
 </body>
 </html>

@@ -54,6 +54,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			
 			<span style="line-height: 55px;font-size: 18px;margin-left: 20px;font-weight: bold;">实验</span>
 			</c:if>
+			<c:if test="${taskCategory  eq 'challenge'}">
+			
+			<span style="line-height: 55px;font-size: 18px;margin-left: 20px;font-weight: bold;">挑战</span>
+			</c:if>
+			<c:if test="${taskCategory  eq 'turn_class'}">
+			
+			<span style="line-height: 55px;font-size: 18px;margin-left: 20px;font-weight: bold;">翻转</span>
+			</c:if>
 			<c:if test="${taskCategory  eq 'all'}">
 			
 			<span style="line-height: 55px;font-size: 18px;margin-left: 20px;font-weight: bold;">全部</span>

@@ -335,7 +335,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                   </ul>
               </nav>
           </div>
-
+	<c:if test="${aocscList!=null }">
           <!--学生成果-->
           <div class="chengguo">
               学生成果
@@ -411,12 +411,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                   </div>
               
           </div>
-
+          </c:if>
+		<c:if test="${iURPList!=null }">
           <!--产学研项目-->
           <div class="xiangmu" style="padding-left: 20px;padding-bottom: 0%">
             产学研
               <span><a href="">更多</a></span>
-              <table>
+              <%-- <table>
                   <tr>
                       <td style="width: 31%;">
                           <div  class="xiangmu-out" style="width: 95%;height:355px;">
@@ -484,24 +485,76 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                                   </div>
                               </div>
                           </div>
-                      </td>
+                      </td>--%>
+                      <table>
+                      <tr>
+                      <c:forEach items="${iURPList }" var="item" varStatus="status">
+                      
                       <td style="width: 31%;">
+                      <a
+							href="${pageContext.request.contextPath}/achievement/toDetailIURP?achievementId=${item.projectId }">
                           <div  class="xiangmu-out" style="width: 95%;height:355px;">
-                              <div class="rel-img" style="width: 100%; height: 58%;"><img src="${pageContext.request.contextPath}/images/chanxueyan_06.jpg" alt="" style="width: 100%; height: 100%;"></div>
+                              <div class="rel-img" style="width: 100%; height: 51%;"><img src="${item.firstPicture }" alt="" style="width: 100%; height: 100%;"></div>
                               <div class="info">
                                   <div class="title" style="margin-top: 10px;">
                                       <p style="font-family: 微软雅黑; font-size: 20px; font-weight: 20px;opacity: 1;">科技创新项目</p>
-                                      <p style="margin-bottom: -1px;">团队名称：科研团队</p>
-                                      <p style="margin-bottom: -1px;">获奖情况：国家二等奖</p>
-                                      <p style="margin-bottom: -1px;">完成时间：2006-12-22</p>
+                                      <p style="margin-bottom: -1px;">团队名称：${item.projectName }</p>
+                                      <p style="margin-bottom: -1px;">简介：${item.introduction }...</p>
+                                      <p style="margin-bottom: -1px;">完成时间：${item.uploadTime }</p>
+                                       <p style="margin-bottom: -1px;">浏览量:${item.browseVolume }</p>
                                   </div>
                               </div>
                           </div>
+                          </a>
                       </td>
+                      
+                      </c:forEach>
                   </tr>
-              </table>
+              </table> 
+              <%-- <div class="col-md-12 bottomColumn" style="min-height: 400px;margin:0px">
+				<c:if test="${!empty iURPList}">
+					<c:forEach items="${iURPList }" var="item" varStatus="status">
+						<a
+							href="${pageContext.request.contextPath}/achievement/toDetailIURP?achievementId=${item.projectId }">
+							<div class="chengguo-out col-md-4"
+								style="padding: 8px; height: 330px; margin-top: 1%;">
+								<div class="doorPlank xiangmu-out"
+									style="padding: 2.5rem; background-color: white; height: 100%">
+									<div class="rel-img">
+										<img src="${pageContext.request.contextPath}/img/fire.png"
+											style="position: absolute; margin-left: 0; margin-top: 0;    width: 23px;
+    height: 23px;">
+										<img alt="" style="width: 100%; height: 150px;"
+											src="${pageContext.request.contextPath}/jsp/showImg.jsp?path=${item.firstPicture }" />
+									</div>
+									<div class="info" style="width: 100%; height: 80px;">
+										<div class="infoContent">
+											<h4 class="achievementTitle titleStyle">
+												<b>${item.projectName }</b>
+											</h4>
+											<p class="description">
+												<b>产学研</b>
+											</p>
+											<p class="description" style="height: 40px">${item.introduction }</p>
+											<hr style="margin: 4px">
+											<div>
+												<p class="publishTime" style="float: left; color: gray">
+													发布于：
+													<fmt:formatDate value="${item.uploadTime }"
+														pattern="yyyy-MM-dd" />
+												</p>
+												<p class="publishTime" style="float: right; color: gray">浏览量:${item.browseVolume }</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</a>
+					</c:forEach>
+				</c:if>
+			</div> --%>
           </div>
-
+	</c:if>
           <!--老师排行榜-->
           <div class="teacher" style="height: 857px;">
               教师排行榜

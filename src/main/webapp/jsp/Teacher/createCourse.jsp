@@ -153,7 +153,6 @@
 
 <script type="text/javascript">
 	function submitForm() {
-		debugger;
 		var selectClass = "";
 		var flag = true;
 		$("input[name = 'select']").each(function() {
@@ -163,23 +162,6 @@
 		if ($("#courseName").val() == null || $("#courseName").val() == '') {
 			alert("课程名不能为空！");
 			flag = false;
-		}else{
-			$
-			.ajax({
-				async : false,
-				cache : false,
-				url : "${pageContext.request.contextPath}/teacher/isRepeatCourse/"
-						+ $("#courseName").val(),
-				type : "POST",
-				dataType:"text",
-				success:function(result) {
-					if(eval(result)!="null")
-						alert(eval(result));
-					if(eval(result) == "此课程已存在，不能重复发布，请修改课程名！"){
-						flag = false;
-					}
-				}
-			});
 		}
 		if (!UE.getEditor('courseDetail').hasContents()) {
 			alert("课程描述不能为空！");

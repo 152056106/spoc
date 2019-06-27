@@ -521,6 +521,7 @@
 			 return false;	
 		 }
 		 if($("#taskEndTimeEdit").val()==""){
+			 debugger;
 			 alert("请选择任务截至时间");
 			 $("#taskEndTimeEdit").focus();
 			 return false;	
@@ -532,9 +533,9 @@
 			 return false;	 
 		 }
 	
-		 if($("#taskEndTimeSelect").val()==""){
+		 if($("#taskEndTimeEdit").val()==""){
 			 alert("请选择任务截至时间");
-			 $("#taskEndTimeSelect").focus();
+			 $("#taskEndTimeEdit").focus();
 			 return false;	
 		 }
 	}
@@ -664,7 +665,11 @@
 					style="width: 60%; margin-right: 2%;">
 					<span class="input-group-addon" id="basic-addon3"
 						style="font-size: 20px; padding: 0 50px; font-weight: bold;">任务截至时间</span>
-					<input type="text" style="height: 30px;width: 185px"  class="Wdate form-control" name="taskEndTime" id="taskEndTimeSelect" onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s'})" placeholder="请输入时间"/>
+					
+				<!--  需要限制时间用这个 -->	
+				<!-- <input type="text" style="height: 30px;width: 185px" class="Wdate form-control" name="taskEndTime" id="taskEndTimeSelect" onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s'})" value="请输入时间"/>  -->
+				<input type="text" style="height: 30px;width: 185px" class="Wdate form-control" name="taskEndTime" id="taskEndTimeSelect" onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="请输入时间"/> 
+				
 				</div>
 				
 
@@ -747,9 +752,10 @@
 				style="width: 68%; margin-right: 2%;">
 				<span class="input-group-addon" id="basic-addon3"
 					style="font-size: 20px; padding: 0 50px; font-weight: bold;">截至时间</span>
-				
-				<input type="text" style="height: 30px;width: 185px" class="Wdate form-control" name="taskEndTime" id="taskEndTimeEdit" onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s'})" value="请输入时间"/>
-			</div>
+				<!--  需要限制时间用这个 -->	
+				<!-- <input type="text" style="height: 30px;width: 185px" class="Wdate form-control" name="taskEndTime" id="taskEndTimeEdit" onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s'})" value="请输入时间"/>  -->
+				<input type="text" style="height: 30px;width: 185px" class="Wdate form-control" name="taskEndTime" id="taskEndTimeEdit" onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="请输入时间"/> 
+		</div>
 			
 				
 				
