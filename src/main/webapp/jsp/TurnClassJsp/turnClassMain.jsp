@@ -77,7 +77,7 @@ a:hover {
 		</div>
 		<div class="col-md-12" style="margin-top:1%">
 			<c:forEach items="${taskList }" var="item">
-				<div style="background-color: white;width: 32%;float:left;margin-left:1%;margin-top:1%;">
+				<div style="background-color: white;width: 32%;float:left;margin-left:1%;margin-top:1%;min-height:150px">
 					<a
 						href="${pageContext.request.contextPath}/turnClass/toTurnClassTeam?taskId=${item.taskId }">
 						<div clas="col-md-12">

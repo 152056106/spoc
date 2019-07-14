@@ -136,6 +136,14 @@ public class TurnClassPlanForClass {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	@Override
+	public String toString() {
+		return "TurnClassPlanForClass [id=" + id + ", taskId=" + taskId + ", teamId=" + teamId + ", planStage="
+				+ planStage + ", demandStage=" + demandStage + ", designStage=" + designStage + ", arithmeticStage="
+				+ arithmeticStage + ", testStage=" + testStage + ", stage=" + stage + ", authorId=" + authorId
+				+ ", authorName=" + authorName + ", authorPicture=" + authorPicture + ", accessoryPath=" + accessoryPath
+				+ ", uploadTime=" + uploadTime + ", content=" + content + "]";
+	}
 	
 	
 }

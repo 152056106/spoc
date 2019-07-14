@@ -33,6 +33,7 @@
 			initialFrameHeight : 180,
 			initialFrameMargin : 0,
 		})
+		changeSelect();
 	})
 </script>
 <script type="text/javascript">
@@ -52,10 +53,10 @@
 	};
 
 	function buttonSubmit() {
+		var detail = $("#detail").html();
 		var judge = true;
-		var pptFile = $("#pptFile").val();
-		if (pptFile == "" && judge) {
-			alert("上传文件为空，请上传");
+		if (detail == "" && judge) {
+			alert("内容为空，请填写");
 			judge = false;
 		}
 		if (judge) {
@@ -70,40 +71,88 @@
 			alert("文件大小超过1MB，重新编辑后上传");
 		}
 	}
+
+	function changeSelect() {
+		var authorId = $("#oldAuthorId").val();
+		if (authorId != "") {
+			$('#authorId').find("option[value=" + authorId + "]").attr(
+					"selected", true);
+		}
+	}
 </script>
 </head>
 <body style="background-color: white;">
-	<form id="formContent" method="post"
-		action="${pageContext.request.contextPath}/turnClass/insertFeedBack"
-		enctype="multipart/form-data">
-		<div class="col-md-12" id="content" style="margin-top: 2%">
-			<textarea id="detail" name="detail" type="text"></textarea>
-		</div>
-		<input name="taskId" value="${task.taskId }" style="display: none">
-		<input name="teamId" value="${team.teamId }" style="display: none">
-		<div class="col-md-12" style="margin-top: 2%">
-			<label for="inputEmail3" class="col-sm-1 control-label">上传视频</label>
-			<input type="file" id="pptFile" name="pptFile" class="col-md-3"
-				style="padding: 0px" onchange="filesize(this)">
-			<div class="col-sm-3" style="padding-left: 0px;">
-				<select class="form-control" id="authorId" name="authorId">
-					<option value="${team.leaderId }">${team.leaderName }</option>
-					<c:forEach items="${team.listStu }" var="l">
-						<option value="${l.studentId }">${l.studentName}</option>
-					</c:forEach>
-				</select>
+	<c:if test="${empty feedBack }">
+		<form id="formContent" method="post"
+			action="${pageContext.request.contextPath}/turnClass/insertFeedBack"
+			enctype="multipart/form-data">
+			<div class="col-md-12" id="content" style="margin-top: 2%">
+				<textarea id="detail" name="detail" type="text"></textarea>
 			</div>
-			<div class="col-md-12" style="padding: 0px; margin-top: 2%;">
-				<p class="pull-left">最后修改时间：2011-05-99 12:00:00</p>
-				<div class="col-md-4 pull-right" style="margin-top: -1%">
-					<div class="btn-group" role="group" aria-label="...">
-						<button type="button" onclick="buttonSubmit()"
-							class="btn btn-default">保存</button>
+			<input name="tcId" style="display: none"> <input
+				id="oldAuthorId" style="display: none"> <input name="taskId"
+				value="${task.taskId }" style="display: none"> <input
+				name="teamId" value="${team.teamId }" style="display: none">
+			<div class="col-md-12" style="margin-top: 2%">
+				<label for="inputEmail3" class="col-sm-1 control-label">上传视频</label>
+				<input type="file" id="pptFile" name="pptFile" class="col-md-3"
+					style="padding: 0px" onchange="filesize(this)">
+				<div class="col-sm-3" style="padding-left: 0px;">
+					<select class="form-control" id="authorId" name="authorId">
+						<option value="${team.leaderId }">${team.leaderName }</option>
+						<c:forEach items="${team.listStu }" var="l">
+							<option value="${l.studentId }">${l.studentName}</option>
+						</c:forEach>
+					</select>
+				</div>
+				<div class="col-md-12" style="padding: 0px; margin-top: 2%;">
+					<div class="col-md-4 pull-right" style="margin-top: -1%">
+						<div class="btn-group" role="group" aria-label="...">
+							<button type="button" onclick="buttonSubmit()"
+								class="btn btn-default">保存</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</c:if>
+	<c:if test="${not empty feedBack }">
+		<form id="formContent" method="post"
+			action="${pageContext.request.contextPath}/turnClass/insertFeedBack"
+			enctype="multipart/form-data">
+			<div class="col-md-12" id="content" style="margin-top: 2%">
+				<textarea id="detail" name="detail" type="text">${feedBack.content }</textarea>
+			</div>
+			<input name="tcId" value="${tc.id }" style="display: none"> <input
+				name="taskId" value="${task.taskId }" style="display: none">
+			<input name="teamId" value="${team.teamId }" style="display: none">
+			<input id="oldAuthorId" value="${tc.authorId }" style="display: none">
+			<input name="feedBackId" value="${feedBack.id }"
+				style="display: none">
+			<div class="col-md-12" style="margin-top: 2%">
+				<label for="inputEmail3" class="col-sm-1 control-label">上传视频</label>
+				<input type="file" id="pptFile" name="pptFile" class="col-md-3"
+					style="padding: 0px" onchange="filesize(this)">
+				<div class="col-sm-3" style="padding-left: 0px;">
+					<select class="form-control" id="authorId" name="authorId">
+						<option value="${team.leaderId }">${team.leaderName }</option>
+						<c:forEach items="${team.listStu }" var="l">
+							<option value="${l.studentId }">${l.studentName}</option>
+						</c:forEach>
+					</select>
+				</div>
+				<div class="col-md-12" style="padding: 0px; margin-top: 2%;">
+					<p class="pull-left">最后修改时间：${tc.uploadTime }</p>
+					<div class="col-md-4 pull-right" style="margin-top: -1%">
+						<div class="btn-group" role="group" aria-label="...">
+							<button type="button" onclick="buttonSubmit()"
+								class="btn btn-default">保存</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</c:if>
 	<div class="col-md-12" style="height: 12px; background-color: #F0F0F0"></div>
 	<div class="col-md-12" style="padding: 2%">
 		<h3 style="margin-top: -1%; margin-left: -1%">学生评论</h3>

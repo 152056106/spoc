@@ -130,13 +130,28 @@ public class TurnClassServiceImpl implements ITurnClassService{
 	}
 
 	@Override
-	public TurnClassFeedback queryFeedBack(String taskId) throws Exception {
-		return turnClassDao.queryFeedBack(taskId);
+	public TurnClassFeedback queryFeedBack(String taskId,String teamId) throws Exception {
+		return turnClassDao.queryFeedBack(taskId,teamId);
 	}
 
 	@Override
 	public TurnClassAccessory queryTurnAccessory(String taskId, String teamId) throws Exception {
 		return turnClassDao.queryTurnAccessory(taskId,teamId);
+	}
+
+	@Override
+	public List<TurnClassTeam> getAllTeam() throws Exception {
+		return turnClassDao.getAllTeam();
+	}
+
+	@Override
+	public List<TurnClassPlanForClass> getInfoForTeamDesignBeforeClass(String taskId, String teamId) throws Exception {
+		return turnClassDao.getInfoForTeamDesignBeforeClass(taskId,teamId);
+	}
+
+	@Override
+	public List<TurnClassAfterModify> getInfoForTeamCourseAfterEdit(String taskId, String teamId) throws Exception {
+		return turnClassDao.getInfoForTeamCourseAfterEdit(taskId,teamId);
 	}
 
 }

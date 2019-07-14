@@ -252,8 +252,7 @@
 	<div class="main_b_top row">
 		<h3 class="col-md-12">任务描述</h3>
 		<div class="details col-md-12">${task.taskDetail }</div>
-		<br> <br> <br> <br> <br> 
-		<span>附件</span>
+		<br> <br> <br> <br> <br> <span>附件</span>
 		<ul class="more">
 			<c:forEach items="${task.accessoryList }" var="accessory">
 				<li class="left"><img src="img/头像.png" /> <a
@@ -272,7 +271,7 @@
 		<c:forEach items="${listTeam }" var="item" varStatus="status">
 			<a
 				href="${pageContext.request.contextPath}/turnClass/toTurnClassTeamDetail?taskId=${task.taskId}&teamId=${item.teamId}">
-				<div class="main_b_group row" style="margin-left: 10%">
+				<div class="main_b_group row" style="margin-left: 10%;">
 					<div class="group_t">
 						<div class="col-md-1"></div>
 						<div class="group_name col-md-3">
@@ -284,23 +283,34 @@
 					</div>
 					<div class="group_m">
 						<div class="people col-md-9">
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="img-circle center-block">
-									<img src="../images/tou2.png" alt="">
+									<img src="../img/turnClass/turn_class_picture.jpeg"
+										style="width: 100%; height: 100%" alt="">
 								</div>
 								<p class="p1 text-center">${item.leaderId }&nbsp&nbsp&nbsp${item.leaderName
 									}</p>
 								<p class="text-center">组长</p>
 							</div>
+							<div class="col-md-1"></div>
 							<c:forEach items="${item.listStu }" var="i">
-								<div class="col-md-3">
-									<div class="img-circle center-block">
-										<img
-											src="${pageContext.request.contextPath}/jsp/showImg.jsp?path=${i.faceImg }"
-											style="width: 100%; height: 100%;" alt="" />
-									</div>
+								<div class="col-md-2">
+									<c:if test="${empty i.faceImg }">
+										<div class="img-circle center-block">
+											<img src="../img/turnClass/turn_class_picture.jpeg"
+												style="width: 100%; height: 100%" alt="">
+										</div>
+									</c:if>
+									<c:if test="${not empty i.faceImg }">
+										<div class="img-circle center-block">
+											<img
+												src="${pageContext.request.contextPath}/jsp/showImg.jsp?path=${i.faceImg }"
+												style="width: 100%; height: 100%;" alt="" />
+										</div>
+									</c:if>
 									<p class="text-center">${i.studentId }&nbsp&nbsp&nbsp${i.studentName}</p>
 								</div>
+
 							</c:forEach>
 						</div>
 						<div class="group_b col-md-12" style="margin-top: -2%">

@@ -227,7 +227,25 @@
 	<select id="queryFeedBack" parameterType="java.lang.String"
 		resultMap="turnClassFeedbackMap">
 		select * from
-		turn_class_feedback where task_id = #{taskId};
+		turn_class_feedback where task_id = #{taskId}
+		and team_id = #{teamId};
+	</select>
+
+
+	<select id="getInfoForTeamDesignBeforeClass" resultMap="turnClassPlanForClassMap">
+		select *
+		from turn_class_plan_for_class where task_id = #{taskId} and team_id =
+		#{teamId};
+	</select>
+
+	<select id="getInfoForTeamCourseAfterEdit" resultMap="turnClassPlanForClassMap">
+		select *
+		from turn_class_after_modify where task_id = #{taskId} and team_id =
+		#{teamId};
+	</select>
+
+	<select id="getAllTeam" resultMap="turnClassTeamMap">
+		select * from turn_class_team;
 	</select>
 
 	<select id="queryTurnAccessory" parameterType="java.lang.String"
@@ -238,7 +256,7 @@
 	</select>
 
 	<insert id="insertTaskTeam" parameterType="cn.edu.tit.bean.TurnClassTeam">
-		INSERT INTO
+		replace INTO
 		turn_class_team
 		(team_id,
 		leader_id,
@@ -272,7 +290,7 @@
 	</insert>
 
 	<insert id="insertTurnClassAccessory" parameterType="cn.edu.tit.bean.TurnClassAccessory">
-		INSERT INTO
+		replace INTO
 		turn_class_accessory
 		(accessory_id,
 		accessory_name,
@@ -285,7 +303,7 @@
 	</insert>
 
 	<insert id="insertPrepareForClass" parameterType="cn.edu.tit.bean.TurnClassPlanForClass">
-		INSERT INTO
+		replace INTO
 		turn_class_plan_for_class
 		(id,
 		task_id,
@@ -322,7 +340,7 @@
 		);
 	</insert>
 	<insert id="insertEndAchievement" parameterType="cn.edu.tit.bean.TurnClassAchievement">
-		INSERT INTO
+		replace INTO
 		turn_class_achievement
 		(id,
 		task_id,
@@ -359,7 +377,7 @@
 		);
 	</insert>
 	<insert id="insertClassAfterModify" parameterType="cn.edu.tit.bean.TurnClassAfterModify">
-		INSERT INTO
+		replace INTO
 		turn_class_after_modify
 		(id,
 		task_id,
@@ -396,7 +414,7 @@
 		);
 	</insert>
 	<insert id="insertFeedBack" parameterType="cn.edu.tit.bean.TurnClassFeedback">
-		INSERT INTO
+		replace INTO
 		turn_class_feedback
 		(id,
 		content,

@@ -87,7 +87,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				  </c:if>
 				  <li role="presentation"><a  target="lcontent" id="als"  href="${pageContext.request.contextPath}/teacher/toteacherTaskList?taskCategory=work">作业</a></li>
 				  <li role="presentation"><a  target="lcontent"  id="als" href="${pageContext.request.contextPath}/teacher/toteacherTaskList?taskCategory=trial">实验</a></li>
-				  <li role="presentation"><a  target="lcontent" id="als"  href="${pageContext.request.contextPath}/teacher/toteacherTaskList?taskCategory=turn_class">翻转</a></li>
+				  <li role="presentation"><a  target="lcontent" id="als"  href="${pageContext.request.contextPath}/turnClass/getStudentTurnClass">翻转</a></li>
 				  <li role="presentation"><a  target="lcontent"  id="als" href="${pageContext.request.contextPath}/teacher/toteacherTaskList?taskCategory=course_design">课设</a></li>
 				  
 				

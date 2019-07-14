@@ -41,6 +41,7 @@ import cn.edu.tit.common.Common;
 import cn.edu.tit.iservice.IStudentService;
 import cn.edu.tit.iservice.ITeacherService;
 import cn.edu.tit.iservice.ITurnClassService;
+import net.sf.json.JSONArray;
 
 @RequestMapping("/turnClass")
 @Controller
@@ -64,12 +65,27 @@ public class TurnClassController {
 		for (Task task : list) {
 			String taskId = task.getTaskId();
 			virList = teacherService.searchTurnTaskMapVir(taskId);//返回的是virtualClass集合
+			Teacher tea = teacherService.teacherLoginByEmployeeNum(task.getPublisherId());//一个任务下的教师只查询一次
+			task.setPublisherId(tea.getTeacherName());
 			for (String string : virList) {
-				List<RealClass> listReal = teacherService.getRealClassList(string);
-				task.setClassList(listReal);
-				Teacher tea = teacherService.teacherLoginByEmployeeNum(task.getPublisherId());
-				task.setPublisherId(tea.getTeacherName());
-				endList.add(task);
+				Task t =new Task();
+				t.setTaskId(task.getTaskId());
+				t.setTaskTitle(task.getTaskTitle());
+				t.setTaskDetail(task.getTaskDetail());
+				t.setPublisherId(task.getPublisherId());
+				t.setPublishTime(task.getPublishTime());
+				t.setVirtualClassNum(task.getVirtualClassNum());
+				t.setKnowledgePoints(task.getKnowledgePoints());
+				t.setUseNum(task.getUseNum());//设置使用次数为1
+				t.setWatchNum(task.getWatchNum());
+				t.setCourseId(task.getCourseId());
+				t.setTaskType(task.getTaskType());
+				t.setStatus(task.getStatus());
+				List<RealClass> listReal = new ArrayList<>();
+				listReal = teacherService.getRealClassList(string);
+				t.setClassList(listReal);
+				System.out.println(task.toString()+"------------------------");
+				endList.add(t);
 			}
 		}
 		mv.addObject("taskList",endList);
@@ -212,14 +228,18 @@ public class TurnClassController {
 	public ModelAndView toCourseFeedback(HttpServletRequest request,@RequestParam("taskId")String taskId,@RequestParam("teamId")String teamId) throws Exception {
 		ModelAndView mv = new ModelAndView();
 		Task task = turnClassService.getTaskById(taskId);
-		TurnClassFeedback tc = new TurnClassFeedback();
-		tc = turnClassService.queryFeedBack(taskId);
+		TurnClassFeedback tc = null;
+		tc = turnClassService.queryFeedBack(taskId,teamId);
 		TurnClassAccessory ac  =new TurnClassAccessory();
 		ac = turnClassService.queryTurnAccessory(taskId,teamId);
 		TurnClassTeam tct = turnClassService.getTeamById(teamId);
 		List<Student> listStudent = new ArrayList<>();
 		String[] a = tct.getMemberId().split(",");
 		for (int i = 0; i < a.length; i++) {
+			if(tc!=null&&tc.getAuthorId().equals(a[i]))
+			{
+				continue;
+			}
 			listStudent.add(studentService.studentLoginByEmployeeNum(a[i]));
 		}
 		tct.setListStu(listStudent);
@@ -538,10 +558,49 @@ public class TurnClassController {
 			tt.setStatus("正在进行");
 			turnClassService.insertTaskTeam(tt);
 		} catch (Exception e) {
-			// TODO: handle exception
 			mv = toTurnClassTeam(request,taskId);
 		}
 		mv = toTurnClassTeam(request,taskId);
+		return mv;
+	}
+
+	@RequestMapping(value="getStudentTurnClass",method= {RequestMethod.GET})
+	public ModelAndView getStudentTurnClass(HttpServletRequest request) throws Exception {
+		ModelAndView mv = new ModelAndView();
+		List<TurnClassTeam> teamList = new ArrayList<>();
+		Student stu = (Student) request.getSession().getAttribute("student");
+		String stuId = stu.getStudentId();
+		List<String> taskIdList = new ArrayList<>();//暂存taskId
+		List<Task> taskList = new ArrayList<>();
+		try {
+			teamList = turnClassService.getAllTeam();
+			//便利team集合，筛选此学生拥有的任务
+			for (TurnClassTeam turnClassTeam : teamList) {
+				String leaderId = turnClassTeam.getLeaderId();
+				String[] a = turnClassTeam.getMemberId().split(",");
+				if(leaderId.equals(stuId))
+				{
+					taskIdList.add(turnClassTeam.getTaskId());//存储taskId
+					continue;
+				}
+				for (int i = 0; i < a.length; i++) {
+					String string = a[i];
+					if(string.equals(stuId))
+					{
+						taskIdList.add(turnClassTeam.getTaskId());//存储taskId
+						continue;
+					}
+				}
+			}
+			for (String string : taskIdList) {
+				Task task = turnClassService.getTaskById(string);
+				taskList.add(task);
+			}
+		} catch (Exception e) {
+			mv.addObject("taskList",null);
+		}
+		mv.addObject("taskList",taskList);
+		mv.setViewName("/jsp/VirtualClass/content");
 		return mv;
 	}
 
@@ -807,6 +866,11 @@ public class TurnClassController {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> formdata = (Map<String, Object>) obj[1]; // 获取课程内容
 			TurnClassFeedback fb = new TurnClassFeedback();
+			String tcId = (String)formdata.get("tcId");
+			if(!tcId.equals("")||tcId!=null)
+			{
+				projectId = tcId;
+			}
 			String accessoryId = Common.uuid();
 			fb.setAccessoryId(accessoryId);
 			String authorId = (String)formdata.get("authorId");
@@ -831,10 +895,188 @@ public class TurnClassController {
 			tca.setTaskId(projectId);
 			tca.setUploadTime(new Timestamp(System.currentTimeMillis()));
 			turnClassService.insertTurnClassAccessory(tca);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		mv = toCourseFeedback(request,taskId,teamId);
 		return mv;
 	}
+
+	/**
+	 * 前台获去已经存储的信息
+	 * */
+	@RequestMapping(value="getInfoForTeamDesignBeforeClass",method= {RequestMethod.GET})
+	public void getInfoForTeamDesignBeforeClass(HttpServletRequest request,HttpServletResponse response,@RequestParam("taskId")String taskId,@RequestParam("teamId")String teamId,@RequestParam("category")String category) throws Exception {
+		TurnClassPlanForClass tc = null;
+		List<TurnClassPlanForClass> list = new ArrayList<>();
+		list = turnClassService.getInfoForTeamDesignBeforeClass(taskId,teamId);
+		switch (category) {
+		case "planStage":
+			for (TurnClassPlanForClass turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==0&&turnClassPlanForClass.getDemandStage()==0&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "demandStage":
+			for (TurnClassPlanForClass turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==0&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "designStage":
+			for (TurnClassPlanForClass turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "arithmeticStage":
+			for (TurnClassPlanForClass turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==1&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "testStage":
+			for (TurnClassPlanForClass turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getTestStage()==1&&turnClassPlanForClass.getArithmeticStage()==1&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		String result="";
+		if(tc!=null)
+		{
+			JSONObject ob=new JSONObject();
+			ob.put("judge","notNull");
+			ob.put("content",tc.getContent());
+			ob.put("time",tc.getUploadTime().toString());
+			Student leader = studentService.studentLoginByEmployeeNum(tc.getAuthorId());
+			ob.put("leader", leader.getStudentId());
+			try {
+				request.setCharacterEncoding("utf-8");
+				response.setContentType("application/json;charset=UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			result = ob.toString();
+		}
+		if(tc==null)
+		{			
+			JSONObject ob=new JSONObject();
+			ob.put("judge","null");
+			try {
+				request.setCharacterEncoding("utf-8");
+				response.setContentType("application/json;charset=UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			result = ob.toString();
+		}
+		try {
+			response.getWriter().print(result);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 前台获去已经存储的信息
+	 * */
+	@RequestMapping(value="getInfoForTeamCourseAfterEdit",method= {RequestMethod.GET})
+	public void getInfoForTeamCourseAfterEdit(HttpServletRequest request,HttpServletResponse response,@RequestParam("taskId")String taskId,@RequestParam("teamId")String teamId,@RequestParam("category")String category) throws Exception {
+		TurnClassAfterModify tc = null;
+		List<TurnClassAfterModify> list = new ArrayList<>();
+		list = turnClassService.getInfoForTeamCourseAfterEdit(taskId,teamId);
+		switch (category) {
+		case "planStage":
+			for (TurnClassAfterModify turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==0&&turnClassPlanForClass.getDemandStage()==0&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "demandStage":
+			for (TurnClassAfterModify turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==0&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "designStage":
+			for (TurnClassAfterModify turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "arithmeticStage":
+			for (TurnClassAfterModify turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==1&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "testStage":
+			for (TurnClassAfterModify turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getTestStage()==1&&turnClassPlanForClass.getArithmeticStage()==1&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		String result="";
+		if(tc!=null)
+		{
+			JSONObject ob=new JSONObject();
+			ob.put("judge","notNull");
+			ob.put("content",tc.getContent());
+			ob.put("time",tc.getUploadTime().toString());
+			Student leader = studentService.studentLoginByEmployeeNum(tc.getAuthorId());
+			ob.put("leader", leader.getStudentId());
+			try {
+				request.setCharacterEncoding("utf-8");
+				response.setContentType("application/json;charset=UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			result = ob.toString();
+		}
+		if(tc==null)
+		{			
+			JSONObject ob=new JSONObject();
+			ob.put("judge","null");
+			try {
+				request.setCharacterEncoding("utf-8");
+				response.setContentType("application/json;charset=UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			result = ob.toString();
+		}
+		try {
+			response.getWriter().print(result);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
 }

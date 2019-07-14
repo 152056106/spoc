@@ -48,9 +48,15 @@ public interface ITurnClassDao {
 
 	void insertFeedBack(TurnClassFeedback fb)throws Exception;
 
-	TurnClassFeedback queryFeedBack(@Param("taskId")String taskId)throws Exception;
+	TurnClassFeedback queryFeedBack(@Param("taskId")String taskId,@Param("teamId")String teamId)throws Exception;
 
 	TurnClassAccessory queryTurnAccessory(@Param("taskId")String taskId, @Param("teamId")String teamId);
+
+	List<TurnClassTeam> getAllTeam()throws Exception;
+
+	List<TurnClassPlanForClass> getInfoForTeamDesignBeforeClass(@Param("taskId")String taskId, @Param("teamId")String teamId)throws Exception;
+
+	List<TurnClassAfterModify> getInfoForTeamCourseAfterEdit(@Param("taskId")String taskId, @Param("teamId")String teamId)throws Exception;
 
 
 }

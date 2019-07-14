@@ -99,14 +99,57 @@
 							nowStage = "testStage";
 						}
 						if ("all" == complishStage) {
+							changeInfo("testStage");
+							nowStage = "testStage";
 							$("#submitBut").attr("disabled", true);
 						}
 						i = i + 1;
-						$("#" + i).css("background-color", "blue");
+						$("#" + i).css("background-color", "#2B7BD1");
 					}
 				})
 	}
-
+	
+	function changeInfo(category) {
+		var teamId = $("#teamId").val();
+		var taskId = $("#taskId").val();
+		$
+				.ajax({
+					async : false,
+					cache : false,
+					url : "${pageContext.request.contextPath}/turnClass/getInfoForTeamCourseAfterEdit?teamId="
+							+ teamId
+							+ "&taskId="
+							+ taskId
+							+ "&category="
+							+ category,
+					type : "get",
+					dataType : "json",
+					success : function(result) {
+						if (result.judge == "notNull") {
+							var content = result.content;
+							var time = result.time;
+							var authorId = result.leader;
+							time = "最后修改时间：" + time;
+							$("#uploadTime").html(time);
+							$('#authorId').find(
+									"option[value=" + authorId + "]").attr(
+									"selected", true);
+							var ue = UE.getEditor('detail');
+							ue.ready(function() {
+								ue.setContent(content);
+							})
+						}
+						if (result.judge == "null") {
+							$("#uploadTime").html("");
+							var ue = UE.getEditor('detail');
+							ue.ready(function() {
+								ue.setContent("");
+							})
+						}
+					}
+				})
+	}
+	
 	function submitButton() {
 		var path = "${pageContext.request.contextPath}/turnClass/insertClassAfterModify/"
 				+ nowStage;
@@ -116,27 +159,31 @@
 
 	function nextStep() {
 		if ("planStage" == nowStage) {
-			$("#2").css("background-color", "blue");
+			$("#2").css("background-color", "#2B7BD1");
 			$("#1").css("background-color", "#CC9933");
 			nowStage = "demandStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("demandStage" == nowStage) {
-			$("#3").css("background-color", "blue");
+			$("#3").css("background-color", "#2B7BD1");
 			$("#2").css("background-color", "#CC9933");
 			nowStage = "designStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("designStage" == nowStage) {
-			$("#4").css("background-color", "blue");
+			$("#4").css("background-color", "#2B7BD1");
 			$("#3").css("background-color", "#CC9933");
 			nowStage = "arithmeticStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("arithmeticStage" == nowStage) {
-			$("#5").css("background-color", "blue");
+			$("#5").css("background-color", "#2B7BD1");
 			$("#4").css("background-color", "#CC9933");
 			nowStage = "testStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("testStage" == nowStage) {
@@ -152,26 +199,30 @@
 		}
 		if ("demandStage" == nowStage) {
 			$("#2").css("background-color", "#CC9933");
-			$("#1").css("background-color", "blue");
+			$("#1").css("background-color", "#2B7BD1");
 			nowStage = "planStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("designStage" == nowStage) {
 			$("#3").css("background-color", "#CC9933");
-			$("#2").css("background-color", "blue");
+			$("#2").css("background-color", "#2B7BD1");
 			nowStage = "demandStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("arithmeticStage" == nowStage) {
 			$("#4").css("background-color", "#CC9933");
-			$("#3").css("background-color", "blue");
+			$("#3").css("background-color", "#2B7BD1");
 			nowStage = "designStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("testStage" == nowStage) {
 			$("#5").css("background-color", "#CC9933");
-			$("#4").css("background-color", "blue");
+			$("#4").css("background-color", "#2B7BD1");
 			nowStage = "arithmeticStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 	}
