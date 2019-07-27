@@ -238,9 +238,15 @@
 		#{teamId};
 	</select>
 
-	<select id="getInfoForTeamCourseAfterEdit" resultMap="turnClassPlanForClassMap">
+	<select id="getInfoForTeamCourseAfterEdit" resultMap="turnClassAfterModifyMap">
 		select *
 		from turn_class_after_modify where task_id = #{taskId} and team_id =
+		#{teamId};
+	</select>
+	
+	<select id="getInfoForTeamAchievement" resultMap="turnClassAchievementMap">
+		select *
+		from turn_class_achievement where task_id = #{taskId} and team_id =
 		#{teamId};
 	</select>
 

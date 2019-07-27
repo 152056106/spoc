@@ -154,4 +154,9 @@ public class TurnClassServiceImpl implements ITurnClassService{
 		return turnClassDao.getInfoForTeamCourseAfterEdit(taskId,teamId);
 	}
 
+	@Override
+	public List<TurnClassAchievement> getInfoForTeamAchievement(String taskId, String teamId) throws Exception {
+		return turnClassDao.getInfoForTeamAchievement(taskId,teamId);
+	}
+
 }

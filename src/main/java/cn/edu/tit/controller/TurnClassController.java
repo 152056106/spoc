@@ -1,7 +1,9 @@
 package cn.edu.tit.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -9,10 +11,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -866,23 +872,9 @@ public class TurnClassController {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> formdata = (Map<String, Object>) obj[1]; // 获取课程内容
 			TurnClassFeedback fb = new TurnClassFeedback();
-			String tcId = (String)formdata.get("tcId");
-			if(!tcId.equals("")||tcId!=null)
-			{
-				projectId = tcId;
-			}
 			String accessoryId = Common.uuid();
-			fb.setAccessoryId(accessoryId);
 			String authorId = (String)formdata.get("authorId");
-			fb.setAuthorId(authorId);
-			fb.setContent((String)formdata.get("detail"));
-			fb.setId(projectId);
-			taskId = (String)formdata.get("taskId");
-			fb.setTaskId((String)formdata.get("taskId"));
-			fb.setUploadTime(new Timestamp(System.currentTimeMillis()));
-			teamId = (String)formdata.get("teamId");
-			fb.setTeamId(teamId);
-			turnClassService.insertFeedBack(fb);
+			
 			TurnClassAccessory tca = new TurnClassAccessory();
 			tca.setAccessoryCategory(null);
 			tca.setAccessoryId(accessoryId);
@@ -896,6 +888,16 @@ public class TurnClassController {
 			tca.setUploadTime(new Timestamp(System.currentTimeMillis()));
 			turnClassService.insertTurnClassAccessory(tca);
 			
+			fb.setAccessoryId(Common.readProperties("path")+"/"+accessoryId+"/"+authorId+"/"+files.get(0).getName());
+			fb.setAuthorId(authorId);
+			fb.setContent((String)formdata.get("detail"));
+			fb.setId(projectId);
+			taskId = (String)formdata.get("taskId");
+			fb.setTaskId((String)formdata.get("taskId"));
+			fb.setUploadTime(new Timestamp(System.currentTimeMillis()));
+			teamId = (String)formdata.get("teamId");
+			fb.setTeamId(teamId);
+			turnClassService.insertFeedBack(fb);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -903,9 +905,6 @@ public class TurnClassController {
 		return mv;
 	}
 
-	/**
-	 * 前台获去已经存储的信息
-	 * */
 	@RequestMapping(value="getInfoForTeamDesignBeforeClass",method= {RequestMethod.GET})
 	public void getInfoForTeamDesignBeforeClass(HttpServletRequest request,HttpServletResponse response,@RequestParam("taskId")String taskId,@RequestParam("teamId")String teamId,@RequestParam("category")String category) throws Exception {
 		TurnClassPlanForClass tc = null;
@@ -991,9 +990,6 @@ public class TurnClassController {
 		}
 	}
 	
-	/**
-	 * 前台获去已经存储的信息
-	 * */
 	@RequestMapping(value="getInfoForTeamCourseAfterEdit",method= {RequestMethod.GET})
 	public void getInfoForTeamCourseAfterEdit(HttpServletRequest request,HttpServletResponse response,@RequestParam("taskId")String taskId,@RequestParam("teamId")String teamId,@RequestParam("category")String category) throws Exception {
 		TurnClassAfterModify tc = null;
@@ -1078,5 +1074,109 @@ public class TurnClassController {
 			e1.printStackTrace();
 		}
 	}
+	
+	
+	@RequestMapping(value="getInfoForTeamEndAchievement",method= {RequestMethod.GET})
+	public void getInfoForTeamEndAchievement(HttpServletRequest request,HttpServletResponse response,@RequestParam("taskId")String taskId,@RequestParam("teamId")String teamId,@RequestParam("category")String category) throws Exception {
+		TurnClassAchievement tc = null;
+		List<TurnClassAchievement> list = new ArrayList<>();
+		list = turnClassService.getInfoForTeamAchievement(taskId,teamId);
+		switch (category) {
+		case "planStage":
+			for (TurnClassAchievement turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==0&&turnClassPlanForClass.getDemandStage()==0&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "demandStage":
+			for (TurnClassAchievement turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==0&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "designStage":
+			for (TurnClassAchievement turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==0&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "arithmeticStage":
+			for (TurnClassAchievement turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getArithmeticStage()==1&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1&&turnClassPlanForClass.getTestStage()==0)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		case "testStage":
+			for (TurnClassAchievement turnClassPlanForClass : list) {
+				if(turnClassPlanForClass.getTestStage()==1&&turnClassPlanForClass.getArithmeticStage()==1&&turnClassPlanForClass.getDesignStage()==1&&turnClassPlanForClass.getDemandStage()==1&&turnClassPlanForClass.getPlanStage()==1)
+				{
+					tc = turnClassPlanForClass;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		String result="";
+		if(tc!=null)
+		{
+			JSONObject ob=new JSONObject();
+			ob.put("judge","notNull");
+			ob.put("content",tc.getContent());
+			ob.put("time",tc.getUploadTime().toString());
+			Student leader = studentService.studentLoginByEmployeeNum(tc.getAuthorId());
+			ob.put("leader", leader.getStudentId());
+			try {
+				request.setCharacterEncoding("utf-8");
+				response.setContentType("application/json;charset=UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			result = ob.toString();
+		}
+		if(tc==null)
+		{			
+			JSONObject ob=new JSONObject();
+			ob.put("judge","null");
+			try {
+				request.setCharacterEncoding("utf-8");
+				response.setContentType("application/json;charset=UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			result = ob.toString();
+		}
+		try {
+			response.getWriter().print(result);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	@RequestMapping(value="resourceDownload")
+	public ResponseEntity<byte[]> download(HttpServletRequest request,HttpServletResponse response,@RequestParam("path")String path) throws IOException {
+		request.setCharacterEncoding("utf-8");
+		((ServletRequest) response).setCharacterEncoding("utf-8");  
+		response.setContentType("text/html;charset=UTF-8");
+		File file= new File(path);
+		byte[] body = null;
+		@SuppressWarnings("resource")
+		InputStream is = new FileInputStream(file);
+		body = new byte[is.available()];
+		is.read(body);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Disposition", "attchement;filename=" + file.getName());
+		HttpStatus statusCode = HttpStatus.OK;
+		ResponseEntity<byte[]> entity = new ResponseEntity<byte[]>(body, headers, statusCode);
+		return entity;
+	}
+	
 	
 }

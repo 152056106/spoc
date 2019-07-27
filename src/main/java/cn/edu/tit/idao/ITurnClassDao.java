@@ -58,5 +58,7 @@ public interface ITurnClassDao {
 
 	List<TurnClassAfterModify> getInfoForTeamCourseAfterEdit(@Param("taskId")String taskId, @Param("teamId")String teamId)throws Exception;
 
+	List<TurnClassAchievement> getInfoForTeamAchievement(@Param("taskId")String taskId, @Param("teamId")String teamId)throws Exception;
+
 
 }

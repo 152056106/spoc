@@ -99,10 +99,12 @@
 							nowStage = "testStage";
 						}
 						if ("all" == complishStage) {
+							changeInfo("testStage");
+							nowStage = "testStage";
 							$("#submitBut").attr("disabled", true);
 						}
 						i = i + 1;
-						$("#" + i).css("background-color", "blue");
+						$("#" + i).css("background-color", "#2B7BD1");
 					}
 				})
 	}
@@ -114,29 +116,74 @@
 		$("#formContent").submit();
 	}
 
+	function changeInfo(category) {
+		var teamId = $("#teamId").val();
+		var taskId = $("#taskId").val();
+		$
+				.ajax({
+					async : false,
+					cache : false,
+					url : "${pageContext.request.contextPath}/turnClass/getInfoForTeamEndAchievement?teamId="
+							+ teamId
+							+ "&taskId="
+							+ taskId
+							+ "&category="
+							+ category,
+					type : "get",
+					dataType : "json",
+					success : function(result) {
+						if (result.judge == "notNull") {
+							var content = result.content;
+							var time = result.time;
+							var authorId = result.leader;
+							time = "最后修改时间：" + time;
+							$("#uploadTime").html(time);
+							$('#authorId').find(
+									"option[value=" + authorId + "]").attr(
+									"selected", true);
+							var ue = UE.getEditor('detail');
+							ue.ready(function() {
+								ue.setContent(content);
+							})
+						}
+						if (result.judge == "null") {
+							$("#uploadTime").html("");
+							var ue = UE.getEditor('detail');
+							ue.ready(function() {
+								ue.setContent("");
+							})
+						}
+					}
+				})
+	}
+
 	function nextStep() {
 		if ("planStage" == nowStage) {
-			$("#2").css("background-color", "blue");
+			$("#2").css("background-color", "#2B7BD1");
 			$("#1").css("background-color", "#CC9933");
 			nowStage = "demandStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("demandStage" == nowStage) {
-			$("#3").css("background-color", "blue");
+			$("#3").css("background-color", "#2B7BD1");
 			$("#2").css("background-color", "#CC9933");
 			nowStage = "designStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("designStage" == nowStage) {
-			$("#4").css("background-color", "blue");
+			$("#4").css("background-color", "#2B7BD1");
 			$("#3").css("background-color", "#CC9933");
 			nowStage = "arithmeticStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("arithmeticStage" == nowStage) {
-			$("#5").css("background-color", "blue");
+			$("#5").css("background-color", "#2B7BD1");
 			$("#4").css("background-color", "#CC9933");
 			nowStage = "testStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("testStage" == nowStage) {
@@ -152,26 +199,30 @@
 		}
 		if ("demandStage" == nowStage) {
 			$("#2").css("background-color", "#CC9933");
-			$("#1").css("background-color", "blue");
+			$("#1").css("background-color", "#2B7BD1");
 			nowStage = "planStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("designStage" == nowStage) {
 			$("#3").css("background-color", "#CC9933");
-			$("#2").css("background-color", "blue");
+			$("#2").css("background-color", "#2B7BD1");
 			nowStage = "demandStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("arithmeticStage" == nowStage) {
 			$("#4").css("background-color", "#CC9933");
-			$("#3").css("background-color", "blue");
+			$("#3").css("background-color", "#2B7BD1");
 			nowStage = "designStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 		if ("testStage" == nowStage) {
 			$("#5").css("background-color", "#CC9933");
-			$("#4").css("background-color", "blue");
+			$("#4").css("background-color", "#2B7BD1");
 			nowStage = "arithmeticStage";
+			changeInfo(nowStage);
 			return 0;
 		}
 	}
@@ -225,13 +276,14 @@
 				</select>
 			</div>
 			<div class="col-md-12" style="padding: 0px; margin-top: 2%;">
-				<p class="pull-left">最后修改时间：2011-05-99 12:00:00</p>
+				<p class="pull-left" id="uploadTime"></p>
 				<div class="col-md-4 pull-right" style="margin-top: -1%">
 					<div class="btn-group" role="group" aria-label="...">
-						<button type="button" class="btn btn-default">上一步</button>
-							<button type="button" id="submitBut" onclick="submitButton()"
+						<button type="button" class="btn btn-default"
+							onclick="priviousStep()">上一步</button>
+						<button type="button" id="submitBut" onclick="submitButton()"
 							class="btn btn-default">保存</button>
-						<button type="button" class="btn btn-success">下一步</button>
+						<button type="button" class="btn btn-success" onclick="nextStep()">下一步</button>
 					</div>
 				</div>
 			</div>

@@ -108,7 +108,7 @@
 					}
 				})
 	}
-	
+
 	function changeInfo(category) {
 		var teamId = $("#teamId").val();
 		var taskId = $("#taskId").val();
@@ -149,7 +149,7 @@
 					}
 				})
 	}
-	
+
 	function submitButton() {
 		var path = "${pageContext.request.contextPath}/turnClass/insertClassAfterModify/"
 				+ nowStage;
@@ -278,13 +278,14 @@
 				</select>
 			</div>
 			<div class="col-md-12" style="padding: 0px; margin-top: 2%;">
-				<p class="pull-left">最后修改时间：2011-05-99 12:00:00</p>
+				<p class="pull-left" id="uploadTime"></p>
 				<div class="col-md-4 pull-right" style="margin-top: -1%">
 					<div class="btn-group" role="group" aria-label="...">
-						<button type="button" class="btn btn-default">上一步</button>
+						<button type="button" class="btn btn-default"
+							onclick="priviousStep()">上一步</button>
 						<button type="button" id="submitBut" onclick="submitButton()"
 							class="btn btn-default">保存</button>
-						<button type="button" class="btn btn-success">下一步</button>
+						<button type="button" class="btn btn-success" onclick="nextStep()">下一步</button>
 					</div>
 				</div>
 			</div>

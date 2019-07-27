@@ -58,4 +58,6 @@ public interface ITurnClassService {
 
 	List<TurnClassAfterModify> getInfoForTeamCourseAfterEdit(String taskId, String teamId)throws Exception;
 
+	List<TurnClassAchievement> getInfoForTeamAchievement(String taskId, String teamId)throws Exception;
+
 }

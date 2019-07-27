@@ -89,10 +89,9 @@
 			<div class="col-md-12" id="content" style="margin-top: 2%">
 				<textarea id="detail" name="detail" type="text"></textarea>
 			</div>
-			<input name="tcId" style="display: none"> <input
-				id="oldAuthorId" style="display: none"> <input name="taskId"
-				value="${task.taskId }" style="display: none"> <input
-				name="teamId" value="${team.teamId }" style="display: none">
+			<input id="oldAuthorId" style="display: none"> <input
+				name="taskId" value="${task.taskId }" style="display: none">
+			<input name="teamId" value="${team.teamId }" style="display: none">
 			<div class="col-md-12" style="margin-top: 2%">
 				<label for="inputEmail3" class="col-sm-1 control-label">上传视频</label>
 				<input type="file" id="pptFile" name="pptFile" class="col-md-3"
@@ -123,16 +122,22 @@
 			<div class="col-md-12" id="content" style="margin-top: 2%">
 				<textarea id="detail" name="detail" type="text">${feedBack.content }</textarea>
 			</div>
-			<input name="tcId" value="${tc.id }" style="display: none"> <input
-				name="taskId" value="${task.taskId }" style="display: none">
+			<input name="taskId" value="${task.taskId }" style="display: none">
 			<input name="teamId" value="${team.teamId }" style="display: none">
-			<input id="oldAuthorId" value="${tc.authorId }" style="display: none">
-			<input name="feedBackId" value="${feedBack.id }"
+			<input id="oldAuthorId" value="${feedBack.authorId }"
 				style="display: none">
 			<div class="col-md-12" style="margin-top: 2%">
-				<label for="inputEmail3" class="col-sm-1 control-label">上传视频</label>
-				<input type="file" id="pptFile" name="pptFile" class="col-md-3"
-					style="padding: 0px" onchange="filesize(this)">
+				<label for="inputEmail3" class="col-sm-1 control-label"
+					style="margin-top: 6px">视频文件</label>
+				<div style="height: 40px; padding-left: 36px;">
+					<a
+						href="${pageContext.request.contextPath}/turnClass/resourceDownload?path=${feedBack.accessoryId }">
+						<button class="btn btn-default" type="submit"
+							style="border-radius: 20px; float: left;">文件</button>
+					</a>
+				</div>
+				<!-- 				<input type="file" id="pptFile" name="pptFile" class="col-md-3"
+					style="padding: 0px" onchange="filesize(this)"> -->
 				<div class="col-sm-3" style="padding-left: 0px;">
 					<select class="form-control" id="authorId" name="authorId">
 						<option value="${team.leaderId }">${team.leaderName }</option>
@@ -142,7 +147,7 @@
 					</select>
 				</div>
 				<div class="col-md-12" style="padding: 0px; margin-top: 2%;">
-					<p class="pull-left">最后修改时间：${tc.uploadTime }</p>
+					<p class="pull-left">最后修改时间：${feedBack.uploadTime }</p>
 					<div class="col-md-4 pull-right" style="margin-top: -1%">
 						<div class="btn-group" role="group" aria-label="...">
 							<button type="button" onclick="buttonSubmit()"
